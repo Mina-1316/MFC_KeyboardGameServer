@@ -40,8 +40,8 @@ app.post('/addscore',(req,res)=>{
             scoreArray.push({"name":req.body.name,"score":req.body.score});
             scoreArray.sort((a,b)=>{
                 //정렬 조건 지정
-                if (a.score > b.score) {return -1;}
-                if (a.score < b.score) {return 1;}
+                if (parseInt(a.score) > parseInt(b.score)) {return -1;}
+                if (parseInt(a.score) < parseInt(b.score)) {return 1;}
                 return 0;});
 
             scoreArray = scoreArray.slice(0,maxLeaderboardNumber);
@@ -67,11 +67,33 @@ app.post('/getscore',(req,res)=>{
     }
 });
 
-for(var i=0;i<maxLeaderboardNumber-1;i++){
-    scoreArray.push({"name" : "", "score" : "0"})
+app.post('/resetscore',(req,res)=>{
+    reset();
+    try{
+        //prints the client's IP
+        console.log("connection from : " + req.connection.remoteAddress + "by /resetscore");
+
+        res.send("succesfully resetted");
+        console.log("send response : leaderboard");
+    }catch{
+        console.log("an Error has occured");
+    }
+});
+
+function reset(){
+    scoreArray = [
+        {
+            "name" : "",
+            "score" : "0"
+        }
+    ];
+    for(var i=0;i<maxLeaderboardNumber-1;i++){
+        scoreArray.push({"name" : "", "score" : "0"})
+    }
 }
 
 app.listen(port, ()=>{
+    reset();
     console.log("Server is started at port "+ port);
 });
 
